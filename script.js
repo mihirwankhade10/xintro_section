@@ -3,12 +3,13 @@ const overlay = document.querySelector(".overlay");
 const openMenuBtn = document.querySelector(".open-menu");
 const closeMenuBtn = document.querySelector(".close-menu");
 const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+const navLinks = document.querySelectorAll(".nav-link");
 
 function closeAllDropdowns() {
   dropdownToggles.forEach((button) => {
     const navLink = button.closest(".nav-link");
     if (navLink) {
-      navLink.classList.remove("open");
+      navLink.classList.remove("open", "link-open");
     }
     button.setAttribute("aria-expanded", "false");
     const arrow = button.querySelector(".arrow");
@@ -22,14 +23,14 @@ function toggleDropdown(button) {
   const navLink = button.closest(".nav-link");
   if (!navLink) return;
 
-  const isOpen = navLink.classList.contains("open");
+  const isOpen = navLink.classList.contains("open") || navLink.classList.contains("link-open");
 
   // Close any currently open dropdown first
   closeAllDropdowns();
 
   // If this dropdown wasn't open, open it
   if (!isOpen) {
-    navLink.classList.add("open");
+    navLink.classList.add("open", "link-open");
     button.setAttribute("aria-expanded", "true");
     const arrow = button.querySelector(".arrow");
     if (arrow) {
@@ -55,6 +56,18 @@ dropdownToggles.forEach((button) => {
     e.stopPropagation();
     toggleDropdown(button);
   });
+});
+
+// Also allow clicking nav-link to trigger dropdown toggle
+navLinks.forEach((link) => {
+  const toggleBtn = link.querySelector(".dropdown-toggle");
+  if (toggleBtn) {
+    link.addEventListener("click", (e) => {
+      if (!e.target.closest(".dropdown-list") && !e.target.closest(".dropdown-toggle")) {
+        toggleDropdown(toggleBtn);
+      }
+    });
+  }
 });
 
 // Mobile menu handlers
